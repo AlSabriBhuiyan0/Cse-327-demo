@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">LLM App</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="logout">Logout</string>
+    <string name="input_prompt">Input Prompt</string>
+    <string name="enter_prompt_hint">Enter your prompt here</string>
+    <string name="multimodal_input">Multimodal Input (for M2)</string>
+    <string name="open_camera">Open Camera</string>
+    <string name="capture">Capture</string>
+    <string name="run_instruction_model">Run Instruction Model (M1)</string>
+    <string name="run_multimodal_model">Run Multimodal Model (M2)</string>
+    <string name="m1_output_placeholder">M1 output will appear here</string>
+    <string name="m2_output_placeholder">M2 output will appear here</string>
+    <string name="processing">Processing...</string>
+    <string name="model_results">Model Results</string>
+    <string name="notifications_description">Notifications for model completion</string>
+    <string name="permissions_warning">Some features may not work without permissions</string>
+</resources> 

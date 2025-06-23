@@ -1,0 +1,139 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+        
+        <!-- Login Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_with_google"/>
+                
+            <Button
+                android:id="@+id/logoutButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/logout"
+                android:visibility="gone"/>
+                
+            <TextView
+                android:id="@+id/userEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:visibility="gone"/>
+        </LinearLayout>
+        
+        <!-- Model Loading Progress -->
+        <ProgressBar
+            android:id="@+id/modelProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:layout_marginTop="16dp"/>
+        
+        <!-- Input Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/input_prompt"
+            android:layout_marginTop="16dp"/>
+            
+        <EditText
+            android:id="@+id/inputText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_prompt_hint"
+            android:inputType="textMultiLine"
+            android:minHeight="100dp"/>
+            
+        <!-- Image Capture Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/multimodal_input"
+            android:layout_marginTop="16dp"/>
+            
+        <androidx.camera.view.PreviewView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"/>
+            
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            
+            <Button
+                android:id="@+id/captureImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/open_camera"/>
+                
+            <Button
+                android:id="@+id/captureButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/capture"
+                android:visibility="gone"/>
+        </LinearLayout>
+        
+        <ImageView
+            android:id="@+id/previewImage"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            android:scaleType="centerCrop"/>
+            
+        <!-- Model Buttons -->
+        <Button
+            android:id="@+id/m1Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/run_instruction_model"
+            android:layout_marginTop="16dp"/>
+            
+        <TextView
+            android:id="@+id/m1Output"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/darker_gray"
+            android:padding="8dp"
+            android:text="@string/m1_output_placeholder"/>
+            
+        <Button
+            android:id="@+id/m2Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/run_multimodal_model"
+            android:layout_marginTop="16dp"/>
+            
+        <TextView
+            android:id="@+id/m2Output"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/darker_gray"
+            android:padding="8dp"
+            android:text="@string/m2_output_placeholder"/>
+    </LinearLayout>
+</ScrollView> 
