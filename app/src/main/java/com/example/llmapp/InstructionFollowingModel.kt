@@ -11,14 +11,14 @@ import java.nio.channels.FileChannel
 
 class InstructionFollowingModel(context: Context) {
     private val model: Interpreter
-    private val tokenizer: TinyLlamaTokenizer
+    private val tokenizer: MobileBertTokenizer
     private val modelOptimizer: ModelOptimizer
     
     init {
         modelOptimizer = ModelOptimizer(context)
-        tokenizer = TinyLlamaTokenizer(context)
+        tokenizer = MobileBertTokenizer(context)
         
-        // Try to load the real TinyLlama model
+        // Try to load the real MobileBERT model
         model = try {
             loadRealModel()
         } catch (e: Exception) {
@@ -30,8 +30,8 @@ class InstructionFollowingModel(context: Context) {
     }
     
     private fun loadRealModel(): Interpreter {
-        // Load the actual TinyLlama TFLite model
-        val modelFile = loadModelFile("tinyllama_model.tflite")
+        // Load the actual MobileBERT TFLite model
+        val modelFile = loadModelFile("instruction_model.tflite")
         val options = modelOptimizer.getBestInterpreterOptions()
         return Interpreter(modelFile, options)
     }
@@ -58,15 +58,15 @@ class InstructionFollowingModel(context: Context) {
     
     suspend fun generateResponse(prompt: String): String = withContext(Dispatchers.Default) {
         try {
-            val inputIds = tokenizer.encode(prompt)
-            val output = runModel(inputIds)
+            val (inputIds, inputMask, segmentIds) = tokenizer.encodeMobileBertInputs(prompt)
+            val output = runModel(inputIds, inputMask, segmentIds)
             val response = tokenizer.decode(output)
             
             // Check if we're using the real model
             return@withContext if (isRealModel()) {
-                "TinyLlama response: $response"
+                "MobileBERT response: $response"
             } else {
-                "Mock response from instruction-following model (M1) for: '$prompt'. " +
+                "Mock response from MobileBERT (M1) for: '$prompt'. " +
                 "In a real implementation, this would be the actual generated text from your TFLite model."
             }
         } catch (e: Exception) {
@@ -75,44 +75,59 @@ class InstructionFollowingModel(context: Context) {
         }
     }
     
-    private fun runModel(inputIds: IntArray): IntArray {
+    private fun runModel(inputIds: IntArray, inputMask: IntArray, segmentIds: IntArray): IntArray {
         return try {
-            // Try to run the real model
             if (isRealModel()) {
-                runRealModel(inputIds)
+                runRealModel(inputIds, inputMask, segmentIds)
             } else {
-                // Mock output
                 intArrayOf(1, 2, 3, 4, 5)
             }
         } catch (e: Exception) {
             Log.e("InstructionFollowingModel", "Model inference failed", e)
-            // Fallback to mock output
             intArrayOf(1, 2, 3, 4, 5)
         }
     }
     
-    private fun runRealModel(inputIds: IntArray): IntArray {
-        // Prepare input for the TFLite model
-        val inputArray = Array(1) { inputIds }
-        val outputArray = Array(1) { FloatArray(tokenizer.getVocabSize()) }
-        
-        // Run inference
-        model.run(inputArray, outputArray)
-        
-        // Sample next token (simple greedy sampling)
-        val logits = outputArray[0]
-        val nextToken = logits.indices.maxByOrNull { logits[it] } ?: tokenizer.getUnkTokenId()
-        
-        // For demo, return a few tokens
-        return intArrayOf(nextToken, nextToken + 1, nextToken + 2, nextToken + 3, nextToken + 4)
+    private fun runRealModel(inputIds: IntArray, inputMask: IntArray, segmentIds: IntArray): IntArray {
+        // MobileBERT expects three inputs: input_ids, input_mask, segment_ids
+        val inputs = mapOf(
+            0 to arrayOf(inputIds),
+            1 to arrayOf(inputMask),
+            2 to arrayOf(segmentIds)
+        )
+        val output = Array(1) { FloatArray(tokenizer.getVocabSize()) }
+        model.runForMultipleInputsOutputs(arrayOf(inputIds, inputMask, segmentIds), mapOf(0 to output))
+        // For demo, return the top-5 token indices
+        val logits = output[0]
+        return logits.indices.sortedByDescending { logits[it] }.take(5).toIntArray()
     }
     
     private fun isRealModel(): Boolean {
-        // Check if we're using the real model by checking if the model file exists
         return try {
-            context.assets.open("tinyllama_model.tflite").use { true }
+            context.assets.open("instruction_model.tflite").use { true }
         } catch (e: Exception) {
             false
         }
+    }
+}
+
+class MobileBertTokenizer(private val context: Context) {
+    // TODO: Replace with actual WordPiece tokenizer and vocab loading
+    fun encodeMobileBertInputs(text: String): Triple<IntArray, IntArray, IntArray> {
+        // For demo, create dummy arrays of length 128
+        val maxLen = 128
+        val inputIds = IntArray(maxLen) { 0 }
+        val inputMask = IntArray(maxLen) { 1 }
+        val segmentIds = IntArray(maxLen) { 0 }
+        // TODO: Implement real tokenization and padding
+        return Triple(inputIds, inputMask, segmentIds)
+    }
+    fun decode(tokenIds: IntArray): String {
+        // TODO: Implement real decoding
+        return tokenIds.joinToString(" ")
+    }
+    fun getVocabSize(): Int {
+        // MobileBERT vocab size is 30522
+        return 30522
     }
 } 

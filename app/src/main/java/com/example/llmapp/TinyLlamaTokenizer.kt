@@ -1,3 +1,5 @@
+// This file is deprecated. MobileBERT is now used for M1. No longer in use.
+
 package com.example.llmapp
 
 import android.content.Context
